@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
     <style>
-       /* Body and Background */
-       body {
+        body {
             margin: 0;
             padding: 0;
             height: 120vh;
@@ -14,11 +13,10 @@
             justify-content: center;
             align-items: center;
             background: radial-gradient(circle, rgba(50, 50, 60, 1), rgba(20, 10, 30, 0.9));
-            overflow-y: auto; /* Enable scrolling if content overflows vertically */
+            overflow-y: auto;
             position: relative;
         }
 
-        /* Neon glow effect for background */
         .neon-background {
             position: absolute;
             top: 0;
@@ -39,7 +37,6 @@
             }
         }
 
-        /* Moving Lines Background */
         .moving-lines {
             position: absolute;
             top: 0;
@@ -67,13 +64,12 @@
             }
         }
 
-        /* Calculator Styling */
         .calculator {
             position: relative;
             width: 100%;
-            max-width: 500px; /* Limit max width to 500px */
+            max-width: 500px;
             height: auto;
-            margin: 20px; /* Add margin to prevent it from touching the edges */
+            margin: 20px;
             background-color: #01050a;
             padding: 20px;
             border-radius: 10px;
@@ -91,7 +87,6 @@
             margin-bottom: 10px;
         }
 
-        /* Button styling */
         button {
             width: 100px;
             height: 60px;
@@ -127,7 +122,6 @@
             background-color: #f0f0f0;
         }
 
-        /* Image Buttons */
         .image-button {
             background-size: cover;
             background-position: center;
@@ -135,7 +129,6 @@
             background-repeat: no-repeat;
         }
 
-        /* Image buttons (for numbers and operations) */
         #button1 { background-image: url('one new.jpg'); }
         #button2 { background-image: url('two.jpg'); }
         #button3 { background-image: url('three new.jpg'); }
@@ -155,7 +148,6 @@
         #backspace { background-image: url('delete.jpg'); }
         #equals { background-image: url('equal to.jpg'); }
 
-        /* Scientific Buttons */
         #sin, #cos, #tan, #sqrt, #log, #ln, #e, #pi {
             background-image: none;
             background-color: #4682b4;
@@ -164,14 +156,14 @@
     </style>
 </head>
 <body>
-    <div class="neon-background"></div> <!-- Neon animated background -->
+    <div class="neon-background"></div>
     <div class="moving-lines">
         <div class="line" style="left: 10%; animation-duration: 7s;"></div>
         <div class="line" style="left: 30%; animation-duration: 8s;"></div>
         <div class="line" style="left: 50%; animation-duration: 10s;"></div>
         <div class="line" style="left: 70%; animation-duration: 9s;"></div>
         <div class="line" style="left: 90%; animation-duration: 6s;"></div>
-    </div> <!-- Moving lines background -->
+    </div>
 
     <div class="calculator">
         <input type="text" id="display" disabled>
@@ -220,75 +212,66 @@
     </div>
 
     <script>
-       const display = document.getElementById('display');
-const buttons = document.querySelectorAll('button');
-let expression = '';
-let pendingScientificOperation = null; // Store pending scientific function
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('button');
+        let expression = '';
+        let pendingScientificOperation = null;
 
-buttons.forEach(button => {
-    button.addEventListener('click', () => {
-        const id = button.id;
-        const value = button.dataset.value || button.textContent;
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.id;
+                const value = button.dataset.value || button.textContent;
 
-        if (id === 'clear') {
-            expression = '';
-            display.value = '';
-            pendingScientificOperation = null; // Reset pending operation
-        } else if (id === 'backspace') {
-            expression = expression.slice(0, -1);
-            display.value = expression;
-        } else if (id === 'equals') {
-            try {
-                expression = eval(expression).toString();
-                display.value = expression;
-                pendingScientificOperation = null; // Reset pending operation
-            } catch {
+                if (id === 'clear') {
+                    expression = '';
+                    display.value = '';
+                    pendingScientificOperation = null;
+                } else if (id === 'backspace') {
+                    expression = expression.slice(0, -1);
+                    display.value = expression;
+                } else if (id === 'equals') {
+                    try {
+                        expression = eval(expression).toString();
+                        display.value = expression;
+                        pendingScientificOperation = null;
+                    } catch {
+                        display.value = 'Error';
+                    }
+                } else if (['sin', 'cos', 'tan', 'sqrt', 'log', 'ln', 'e', 'pi'].includes(id)) {
+                    pendingScientificOperation = id;
+                    display.value = `${id}(`;
+                } else {
+                    expression += value;
+                    display.value += value;
+
+                    if (pendingScientificOperation) {
+                        applyScientificOperation(pendingScientificOperation, value);
+                        pendingScientificOperation = null;
+                    }
+                }
+            });
+        });
+
+        function applyScientificOperation(operation, value) {
+            let result = parseFloat(value);
+
+            if (isNaN(result)) {
                 display.value = 'Error';
+                return;
             }
-        } else if (['sin', 'cos', 'tan', 'sqrt', 'log', 'ln', 'e', 'pi'].includes(id)) {
-            pendingScientificOperation = id; // Store the scientific function for later use
-            display.value = `${id}(`; // Show the function in the display
-        } else {
-            expression += value;
-            display.value += value; // Append the value to the display
 
-            // Check if there's a pending scientific operation and apply it
-            if (pendingScientificOperation) {
-                applyScientificOperation(pendingScientificOperation, value);
-                pendingScientificOperation = null; // Clear the pending operation after applying
-            }
+            if (operation === 'sin') result = Math.sin(result * Math.PI / 180);
+            if (operation === 'cos') result = Math.cos(result * Math.PI / 180);
+            if (operation === 'tan') result = Math.tan(result * Math.PI / 180);
+            if (operation === 'sqrt') result = Math.sqrt(result);
+            if (operation === 'log') result = Math.log10(result);
+            if (operation === 'ln') result = Math.log(result);
+            if (operation === 'e') result = Math.E;
+            if (operation === 'pi') result = Math.PI;
+
+            expression = result.toString();
+            display.value = expression;
         }
-    });
-});
-
-function applyScientificOperation(operation, value) {
-    let result = parseFloat(value); // Convert the input number to float
-
-    if (isNaN(result)) {
-        display.value = 'Error';
-        return;
-    }
-
-    // Apply the correct scientific function based on the operation
-    if (operation === 'sin') result = Math.sin(result * Math.PI / 180); // Convert degrees to radians
-    if (operation === 'cos') result = Math.cos(result * Math.PI / 180); // Convert degrees to radians
-    if (operation === 'tan') result = Math.tan(result * Math.PI / 180); // Convert degrees to radians
-    if (operation === 'sqrt') result = Math.sqrt(result);
-    if (operation === 'log') result = Math.log10(result);
-    if (operation === 'ln') result = Math.log(result);
-    if (operation === 'e') result = Math.E;
-    if (operation === 'pi') result = Math.PI;
-
-    // Update the display with the result of the scientific function
-    expression = result.toString();
-    display.value = expression;
-}
-
-
-
     </script>
 </body>
 </html>
-
-
-
