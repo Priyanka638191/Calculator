@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+       /* Body and Background */
+       body {
+            margin: 0;
+            padding: 0;
+            height: 120vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, rgba(50, 50, 60, 1), rgba(20, 10, 30, 0.9));
+            overflow-y: auto; /* Enable scrolling if content overflows vertically */
+            position: relative;
+        }
+
+        /* Neon glow effect for background */
+        .neon-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            animation: neon-glow 5s infinite alternate;
+            background: radial-gradient(circle, rgba(203, 8, 252, 0.5), rgba(8, 150, 252, 0.2));
+        }
+
+        @keyframes neon-glow {
+            0% {
+                filter: blur(10px) brightness(0.8);
+            }
+            100% {
+                filter: blur(20px) brightness(1.2);
+            }
+        }
+
+        /* Moving Lines Background */
+        .moving-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .line {
+            position: absolute;
+            width: 2px;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(203, 8, 252, 1), rgba(8, 150, 252, 0.6));
+            animation: move 10s linear infinite;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-100vh);
+            }
+        }
+
+        /* Calculator Styling */
+        .calculator {
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* Limit max width to 500px */
+            height: auto;
+            margin: 20px; /* Add margin to prevent it from touching the edges */
+            background-color: #01050a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 
+                0 0 20px rgba(203, 8, 252, 0.8),
+                0 0 40px rgba(203, 8, 252, 0.6), 
+                0 0 60px rgba(8, 150, 252, 0.5),
+                0 0 80px rgba(8, 150, 252, 0.4);
+            border: 2px solid rgba(203, 8, 252, 0.8);
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        /* Button styling */
+        button {
+            width: 100px;
+            height: 60px;
+            margin: 5px;
+            background-color: #000508;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 10px rgba(203, 8, 252, 0.5), 0 0 20px rgba(8, 150, 252, 0.3);
+        }
+
+        button:hover {
+            background-color: #02060a;
+            border: 2px solid rgb(203, 8, 252);
+            box-shadow: 0 0 20px rgba(203, 8, 252, 0.8), 0 0 40px rgba(8, 150, 252, 0.6);
+        }
+
+        #display {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 20px;
+            padding: 8px;
+            font-size: 36px;
+            text-align: right;
+            border: none;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+        }
+
+        /* Image Buttons */
+        .image-button {
+            background-size: cover;
+            background-position: center;
+            color: transparent;
+            background-repeat: no-repeat;
+        }
+
+        /* Image buttons (for numbers and operations) */
+        #button1 { background-image: url('one new.jpg'); }
+        #button2 { background-image: url('two.jpg'); }
+        #button3 { background-image: url('three new.jpg'); }
+        #button4 { background-image: url('four new.jpg'); }
+        #button5 { background-image: url('five.jpg'); }
+        #button6 { background-image: url('six.jpg'); }
+        #button7 { background-image: url('seven.jpg'); }
+        #button8 { background-image: url('eight new.jpg'); }
+        #button9 { background-image: url('nine new.jpg'); }
+        #button0 { background-image: url('zero.jpg'); }
+        #decimal { background-image: url('dot.jpg'); }
+        #add { background-image: url('plus.jpg'); }
+        #subtract { background-image: url('subtract.jpg'); }
+        #multiply { background-image: url('multiply.jpg'); }
+        #divide { background-image: url('divide.jpg'); }
+        #clear { background-image: url('clear.jpg'); }
+        #backspace { background-image: url('delete.jpg'); }
+        #equals { background-image: url('equal to.jpg'); }
+
+        /* Scientific Buttons */
+        #sin, #cos, #tan, #sqrt, #log, #ln, #e, #pi {
+            background-image: none;
+            background-color: #4682b4;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="neon-background"></div> <!-- Neon animated background -->
+    <div class="moving-lines">
+        <div class="line" style="left: 10%; animation-duration: 7s;"></div>
+        <div class="line" style="left: 30%; animation-duration: 8s;"></div>
+        <div class="line" style="left: 50%; animation-duration: 10s;"></div>
+        <div class="line" style="left: 70%; animation-duration: 9s;"></div>
+        <div class="line" style="left: 90%; animation-duration: 6s;"></div>
+    </div> <!-- Moving lines background -->
+
+    <div class="calculator">
+        <input type="text" id="display" disabled>
+        <div class="row">
+            <button id="clear" class="image-button"></button>
+            <button id="backspace" class="image-button"></button>
+            <button id="parenthesis">(</button>
+            <button id="parenthesis">)</button>
+        </div>
+        <div class="row">
+            <button id="button9" class="image-button" data-value="9"></button>
+            <button id="button8" class="image-button" data-value="8"></button>
+            <button id="button7" class="image-button" data-value="7"></button>
+            <button id="divide" class="image-button" data-value="/"></button>
+        </div>
+        <div class="row">
+            <button id="button4" class="image-button" data-value="4"></button>
+            <button id="button5" class="image-button" data-value="5"></button>
+            <button id="button6" class="image-button" data-value="6"></button>
+            <button id="multiply" class="image-button" data-value="*"></button>
+        </div>
+        <div class="row">
+            <button id="button1" class="image-button" data-value="1"></button>
+            <button id="button2" class="image-button" data-value="2"></button>
+            <button id="button3" class="image-button" data-value="3"></button>
+            <button id="subtract" class="image-button" data-value="-"></button>
+        </div>
+        <div class="row">
+            <button id="button0" class="image-button" data-value="0"></button>
+            <button id="decimal" class="image-button" data-value="."></button>
+            <button id="equals" class="image-button" data-value="="></button>
+            <button id="add" class="image-button" data-value="+"></button>
+        </div>
+        <div class="row">
+            <button id="sin" style="background-color: #01050a;">sin</button>
+            <button id="cos" style="background-color: #01050a;">cos</button>
+            <button id="tan" style="background-color: #01050a;">tan</button>
+            <button id="sqrt" style="background-color: #01050a;">√</button>
+        </div>
+        <div class="row">
+            <button id="log" style="background-color: #01050a;">log</button>
+            <button id="ln" style="background-color: #01050a;">ln</button>
+            <button id="e" style="background-color: #01050a;">e</button>
+            <button id="pi" style="background-color: #01050a;">π</button>
+        </div>
+    </div>
+
+    <script>
+       const display = document.getElementById('display');
+const buttons = document.querySelectorAll('button');
+let expression = '';
+let pendingScientificOperation = null; // Store pending scientific function
+
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        const id = button.id;
+        const value = button.dataset.value || button.textContent;
+
+        if (id === 'clear') {
+            expression = '';
+            display.value = '';
+            pendingScientificOperation = null; // Reset pending operation
+        } else if (id === 'backspace') {
+            expression = expression.slice(0, -1);
+            display.value = expression;
+        } else if (id === 'equals') {
+            try {
+                expression = eval(expression).toString();
+                display.value = expression;
+                pendingScientificOperation = null; // Reset pending operation
+            } catch {
+                display.value = 'Error';
+            }
+        } else if (['sin', 'cos', 'tan', 'sqrt', 'log', 'ln', 'e', 'pi'].includes(id)) {
+            pendingScientificOperation = id; // Store the scientific function for later use
+            display.value = `${id}(`; // Show the function in the display
+        } else {
+            expression += value;
+            display.value += value; // Append the value to the display
+
+            // Check if there's a pending scientific operation and apply it
+            if (pendingScientificOperation) {
+                applyScientificOperation(pendingScientificOperation, value);
+                pendingScientificOperation = null; // Clear the pending operation after applying
+            }
+        }
+    });
+});
+
+function applyScientificOperation(operation, value) {
+    let result = parseFloat(value); // Convert the input number to float
+
+    if (isNaN(result)) {
+        display.value = 'Error';
+        return;
+    }
+
+    // Apply the correct scientific function based on the operation
+    if (operation === 'sin') result = Math.sin(result * Math.PI / 180); // Convert degrees to radians
+    if (operation === 'cos') result = Math.cos(result * Math.PI / 180); // Convert degrees to radians
+    if (operation === 'tan') result = Math.tan(result * Math.PI / 180); // Convert degrees to radians
+    if (operation === 'sqrt') result = Math.sqrt(result);
+    if (operation === 'log') result = Math.log10(result);
+    if (operation === 'ln') result = Math.log(result);
+    if (operation === 'e') result = Math.E;
+    if (operation === 'pi') result = Math.PI;
+
+    // Update the display with the result of the scientific function
+    expression = result.toString();
+    display.value = expression;
+}
+
+
+
+    </script>
+</body>
+</html>
+
+
+
